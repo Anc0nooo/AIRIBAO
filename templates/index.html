@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>日报生成器</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="app-container" id="appContainer">
+    <header class="app-header">
+      <div class="header-left">
+        <h1 class="app-title" id="appTitle">日报生成器</h1>
+        <p class="app-subtitle" id="appSubtitle">AI驱动 · 智能生成 · 一键导出</p>
+      </div>
+      <div class="header-right">
+        <span class="day-badge" id="dayBadge">第 1 天</span>
+        <button class="icon-btn" id="themeBtn" title="主题">主题</button>
+        <button class="icon-btn" id="historyBtn" title="历史">历史</button>
+        <button class="icon-btn" id="templateBtn" title="模板">模板</button>
+        <button class="icon-btn" id="settingsBtn" title="设置">设置</button>
+        <div class="window-controls">
+          <button class="win-btn minimize" id="winMinimize" title="最小化">
+            <svg width="12" height="12" viewBox="0 0 12 12"><rect x="2" y="5.5" width="8" height="1" fill="currentColor"/></svg>
+          </button>
+          <button class="win-btn maximize" id="winMaximize" title="最大化">
+            <svg width="12" height="12" viewBox="0 0 12 12"><rect x="2" y="2" width="8" height="8" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>
+          </button>
+          <button class="win-btn close" id="winClose" title="关闭">
+            <svg width="12" height="12" viewBox="0 0 12 12"><path d="M2.5 2.5L9.5 9.5M9.5 2.5L2.5 9.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="app-main">
+      <section class="glass-card input-section">
+        <div class="card-header">
+          <h2 id="inputAreaLabel">输入区域</h2>
+          <div class="mode-switch">
+            <button class="mode-btn active" data-mode="ai" id="aiModeLabel">AI生成</button>
+            <button class="mode-btn" data-mode="manual" id="manualModeLabel">手动</button>
+          </div>
+        </div>
+
+        <div class="input-content" id="aiMode">
+          <label class="input-label" id="aiPromptLabel">请简要描述今天的工作内容</label>
+          <div class="input-wrap">
+            <textarea id="aiText" placeholder="请输入工作描述..."></textarea>
+          </div>
+        </div>
+
+        <div class="input-content hidden" id="manualMode">
+          <div class="manual-grid">
+            <div class="form-group">
+              <label id="devTasksLabel">开发类任务（一行一条）</label>
+              <div class="input-wrap">
+                <textarea id="devTasks" rows="3" placeholder="例如：完成登录功能"></textarea>
+              </div>
+            </div>
+            <div class="form-group">
+              <label id="deliverTasksLabel">交付类任务（一行一条）</label>
+              <div class="input-wrap">
+                <textarea id="deliverTasks" rows="3" placeholder="例如：部署测试环境"></textarea>
+              </div>
+            </div>
+            <div class="form-group">
+              <label id="planTasksLabel">明日计划（一行一条）</label>
+              <div class="input-wrap">
+                <textarea id="planTasks" rows="3" placeholder="例如：继续完成报表"></textarea>
+              </div>
+            </div>
+            <div class="form-group">
+              <label id="supportLabel">所需支持/备注</label>
+              <div class="input-wrap">
+                <input type="text" id="supportText" placeholder="例如：需要协助">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="action-buttons">
+          <button class="btn-primary" id="generateBtn" id="generateLabel">生成内容</button>
+          <button class="btn-secondary" id="clearBtn" id="clearLabel">清空</button>
+        </div>
+      </section>
+
+      <section class="glass-card preview-section">
+        <div class="card-header">
+          <h2 id="previewLabel">日报预览（可编辑）</h2>
+          <div class="preview-actions">
+            <button class="btn-secondary small" id="saveBtn" disabled id="saveLabel">保存</button>
+            <button class="btn-secondary small" id="sendBtn" disabled id="sendLabel">发送</button>
+            <button class="btn-primary small" id="submitReportBtn" disabled id="submitLabel">提交日报</button>
+          </div>
+        </div>
+        <div class="preview-content">
+          <div id="previewHint" class="preview-hint">
+            <span id="previewHintText">点击「生成内容」后，日报将显示在这里</span>
+          </div>
+          <textarea id="reportText" class="hidden" placeholder="日报内容..."></textarea>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal-overlay hidden" id="modalOverlay">
+    <div class="glass-modal" id="modal">
+      <div class="modal-header">
+        <h3 id="modalTitle">标题</h3>
+        <button class="close-btn" id="closeModal">×</button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+    </div>
+  </div>
+
+  <div class="toast hidden" id="toast">
+    <span id="toastMessage">操作成功</span>
+  </div>
+
+  <div class="loader-overlay hidden" id="loaderOverlay">
+    <div class="loader-container">
+      <div class="loader"></div>
+      <p id="loaderText">AI正在生成日报...</p>
+    </div>
+  </div>
+
+  <div class="context-menu" id="contextMenu">
+    <div class="context-menu-item" id="ctxCut">
+      <span>剪切</span>
+      <span class="shortcut">Ctrl+X</span>
+    </div>
+    <div class="context-menu-item" id="ctxCopy">
+      <span>复制</span>
+      <span class="shortcut">Ctrl+C</span>
+    </div>
+    <div class="context-menu-item" id="ctxPaste">
+      <span>粘贴</span>
+      <span class="shortcut">Ctrl+V</span>
+    </div>
+    <div class="context-menu-divider"></div>
+    <div class="context-menu-item" id="ctxSelectAll">
+      <span>全选</span>
+      <span class="shortcut">Ctrl+A</span>
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+{
+  "enabled": true,
+  "url": "",
+  "fields": {
+    "project": "",
+    "manager": "",
+    "project_level": "",
+    "work_activity": "",
+    "office_location": "",
+    "is_business_trip": false,
+    "normal_hours": 8,
+    "overtime_hours": 0
+  },
+  "mapping": {
+    "work_content": "today_report",
+    "deliverable": "plan_and_support"
+  },
+  "auto_open": true,
+  "auto_copy": true
+}

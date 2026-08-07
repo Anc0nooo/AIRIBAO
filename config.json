@@ -1,0 +1,18 @@
+{
+  "api": {
+    "key": "",
+    "base_url": "",
+    "model_endpoint": ""
+  },
+  "email": {
+    "sender_email": "",
+    "sender_auth_code": "",
+    "smtp_server": "",
+    "smtp_port": 465,
+    "default_receiver": ""
+  },
+  "template": {
+    "report": "",
+    "ai_prompt": ""
+  }
+}
